@@ -1,4 +1,3 @@
-#importing some important library to be used
 library("dplyr")
 library("stringr")
 
@@ -102,34 +101,6 @@ boxplot(df[,c("age","avg_glucose_level","bmi")],
         col = c("green","yellow","purple"))
 #remove outlying
 
-#converting Character discrete value to a suitable discrete value
-for(i in 1:ncol(df)){
-  if(class(df[,i])=='character'){
-    for(j in 1:nrow(df)){
-      if(df[j,i]=="Male"){
-        df[j,i]="1"
-      }else if(df[j,i]=="Female"){
-        df[j,i]="2"
-      }else if(df[j,i]=="Other"){
-        df[j,i]="3"
-      }else if(df[j,i]=="children"){
-        df[j,i]="1"
-      }else if(df[j,i]=="Govt_job"){
-        df[j,i]="2"
-      }else if(df[j,i]=="Never_worked"){
-        df[j,i]="3"
-      }else if(df[j,i]=="Self-employed"){
-        df[j,i]="4"
-      }else if(df[j,i]=="Private"){
-        df[j,i]="5"
-      }else if(df[j,i]=="Urban"){
-        df[j,i]="1"
-      }else if(df[j,i]=="Rural"){
-        df[j,i]="2"
-      }
-    }
-  }
-}
 
 View(df)
 
@@ -144,28 +115,17 @@ train_cl <- subset(df, split == "TRUE")
 test_cl <- subset(df, split == "FALSE")
 
 # Feature Scaling
-train_scale <- (train_cl[, c(1:10)])
-test_scale <- (test_cl[, c(1:10)])
+train_scale <- (train_cl[, c(2:5,8,9)])
+test_scale <- (test_cl[, c(2:5,8,9)])
 
-# Fitting KNN Model
-# to training data-set
-# As we Know from ML(machine learning) concept, 
-# K can be assumed as sqrt(nrow(data.frame_train)) and also it has to be odd to
-# remove draw case in decision. 
-K=as.integer(sqrt(nrow(train_scale)))
-if(K%%2==0){
-  K=K+1
-}
+
 classifier_knn <- knn(train = train_scale,
                       test = test_scale,
                       cl = train_cl$stroke,
-                      k = K)
+                      k = 59)
 classifier_knn
 
 # Confusion Matrix
 cm <- table(test_cl$stroke, classifier_knn)
 cm
-
-misClassError <- mean(classifier_knn != test_cl$stroke)
-print(paste('Accuracy =', 1-misClassError))
 
